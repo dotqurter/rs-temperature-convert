@@ -15,12 +15,8 @@ fn main() {
     else if item_string.contains(&['C', 'c'][..]) { measure = false; }
     else { panic!("No measure given!"); }
     
-    let num: f32 = item_string // Convert the input to a number.
-        .trim() // Remove the newline
-        .replace(&['F', 'f', 'C', 'c'][..], "")
-        .parse::<f32>()
-        .expect("Not a number!");
-
+    let num = strip_letters(item_string);
+    
     let final_answer = match measure {
         true  => ((num - 32.0) * 0.55),
         false => ((num * 1.8) + 32.0), 
@@ -35,12 +31,14 @@ fn main() {
 }
 
 
-fn strip_letters(st: String) -> Vec<f32> {
+fn strip_letters(st: String) -> f32 {
     let re = Regex::new(r"(\d+)").unwrap();
     
-    re.find_iter(&st)
+    *re.find_iter(&st)
     //uses a mapped filter to grab the value at the iterator, pushes to str, and parses
     //then collects into the vector
-	.filter_map(|nums| nums.as_str().parse().ok())
-	.collect()
+	    .filter_map(|nums| nums.as_str().parse().ok())
+	    .collect::<Vec<f32>>() //... which immediately gets removed, as we only care about the first value
+        .first()
+        .unwrap()
 }
