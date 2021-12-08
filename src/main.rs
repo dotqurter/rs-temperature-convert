@@ -1,4 +1,5 @@
 use std::io;
+use regex::Regex;
 
 fn main() {
     println!("Input temperature: ");
@@ -10,13 +11,13 @@ fn main() {
 
     // Hacky way of telling if the input is Fahrenheit or Celsius for the calculation and end result.
     let measure: bool;
-    if item_string.contains('F') { measure = true; }
-    else if item_string.contains('C') { measure = false; }
+    if item_string.contains(&['F', 'f'][..]) { measure = true; }
+    else if item_string.contains(&['C', 'c'][..]) { measure = false; }
     else { panic!("No measure given!"); }
     
     let num: f32 = item_string // Convert the input to a number.
         .trim() // Remove the newline
-        .replace(&['F','C'][..], "")
+        .replace(&['F', 'f', 'C', 'c'][..], "")
         .parse::<f32>()
         .expect("Not a number!");
 
@@ -31,4 +32,15 @@ fn main() {
     };
     
     println!("{}{}", final_answer, msre);
+}
+
+
+fn strip_letters(st: String) -> Vec<f32> {
+    let re = Regex::new(r"(\d+)").unwrap();
+    
+    re.find_iter(&st)
+    //uses a mapped filter to grab the value at the iterator, pushes to str, and parses
+    //then collects into the vector
+	.filter_map(|nums| nums.as_str().parse().ok())
+	.collect()
 }
