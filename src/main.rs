@@ -8,6 +8,7 @@ fn main() {
         .read_line(&mut item_string)
         .unwrap();
 
+    // Hacky way of telling if the input is Fahrenheit or Celsius for the calculation and end result.
     let measure: bool;
     if item_string.contains('F') { measure = true; }
     else if item_string.contains('C') { measure = false; }
