@@ -32,7 +32,7 @@ fn main() {
 
 
 fn strip_letters(st: String) -> f32 {
-    let re = Regex::new(r"(\d+)").unwrap();
+    let re = Regex::new(r"(\d{1,})").unwrap();
     
     *re.find_iter(&st)
     //uses a mapped filter to grab the value at the iterator, pushes to str, and parses
@@ -40,5 +40,15 @@ fn strip_letters(st: String) -> f32 {
 	    .filter_map(|nums| nums.as_str().parse().ok())
 	    .collect::<Vec<f32>>() //... which immediately gets removed, as we only care about the first value
         .first()
-        .unwrap()
+        .expect("Invalid argument attempted to strip.")
+}
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn letter_strip() {
+        assert_eq!(32.0, super::strip_letters("32F".to_string()));
+        assert_eq!(64.0, super::strip_letters("64C".to_string()));
+    }
 }
